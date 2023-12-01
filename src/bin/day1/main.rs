@@ -26,10 +26,7 @@ fn parse_part1(input: &str) -> impl Iterator<Item = CalibrationDigits> + '_ {
 }
 
 fn parse_part2(input: &str) -> impl Iterator<Item = CalibrationDigits> + '_ {
-    fn find_word_digit(word: &str) -> Option<u64> {
-        // one, two, three, four, five, siz, seven, eight, nine
-        // max length 5
-
+    fn find_digit(word: &str) -> Option<u64> {
         let length = word.len();
 
         if length < 3 {
@@ -74,7 +71,7 @@ fn parse_part2(input: &str) -> impl Iterator<Item = CalibrationDigits> + '_ {
                 return Some(digit as u64);
             }
 
-            if let Some(digit) = find_word_digit(&line[index..]) {
+            if let Some(digit) = find_digit(&line[index..]) {
                 return Some(digit);
             }
 
@@ -124,33 +121,21 @@ mod tests {
     use super::*;
 
     #[bench]
-    fn bench_parse_part1(b: &mut test::Bencher) {
-        let input = include_str!("input.txt");
-
-        b.iter(|| {
-            for parsed in parse_part1(input) {
-                test::black_box(parsed);
-            }
-        });
-    }
-
-    #[bench]
-    fn bench_parse_part2(b: &mut test::Bencher) {
-        let input = include_str!("input.txt");
-
-        b.iter(|| {
-            for parsed in parse_part2(input) {
-                test::black_box(parsed);
-            }
-        });
-    }
-
-    #[bench]
-    fn bench_calculate(b: &mut test::Bencher) {
+    fn bench_part1(b: &mut test::Bencher) {
         let input = include_str!("input.txt");
 
         b.iter(|| {
             let result = calculate(parse_part1(input));
+            test::black_box(result);
+        });
+    }
+
+    #[bench]
+    fn bench_part2(b: &mut test::Bencher) {
+        let input = include_str!("input.txt");
+
+        b.iter(|| {
+            let result = calculate(parse_part2(input));
             test::black_box(result);
         });
     }
