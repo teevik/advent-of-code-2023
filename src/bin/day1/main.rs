@@ -1,22 +1,27 @@
 #![feature(test)]
 
 struct CalibrationDigits {
-    first_digit: u64,
-    last_digit: u64,
+    first_digit: u8,
+    last_digit: u8,
 }
 
 fn parse_part1(input: &str) -> impl Iterator<Item = CalibrationDigits> + '_ {
     input.lines().map(|line| {
+        let line = line.as_bytes();
+
+        // If the ascii char is less than 9, it's a digit, and then perform ascii math
         let first_digit = line
-            .chars()
-            .find_map(|char| char.to_digit(10))
-            .expect("Always there") as u64;
+            .iter()
+            .find(|&char| *char <= b'9')
+            .expect("Always there")
+            - b'0';
 
         let last_digit = line
-            .chars()
+            .iter()
             .rev()
-            .find_map(|char| char.to_digit(10))
-            .expect("Always there") as u64;
+            .find(|&char| *char <= b'9')
+            .expect("Always there")
+            - b'0';
 
         CalibrationDigits {
             first_digit,
@@ -25,54 +30,52 @@ fn parse_part1(input: &str) -> impl Iterator<Item = CalibrationDigits> + '_ {
     })
 }
 
-fn parse_part2(input: &str) -> impl Iterator<Item = CalibrationDigits> + '_ {
-    fn find_digit(word: &str) -> Option<u64> {
-        let length = word.len();
+fn find_word_digit(word: &[u8]) -> Option<u8> {
+    const WORD_DIGITS: [(&[u8], u8); 9] = [
+        (b"one", 1),
+        (b"two", 2),
+        (b"three", 3),
+        (b"four", 4),
+        (b"five", 5),
+        (b"six", 6),
+        (b"seven", 7),
+        (b"eight", 8),
+        (b"nine", 9),
+    ];
 
-        if length < 3 {
-            return None;
+    let length = word.len();
+
+    for (target_word, digit) in WORD_DIGITS {
+        if length < target_word.len() {
+            continue;
         }
 
-        match &word[0..3] {
-            "one" => return Some(1),
-            "two" => return Some(2),
-            "six" => return Some(6),
-            _ => {}
-        }
+        let is_match = target_word
+            .iter()
+            .zip(word.iter())
+            .all(|(&target_char, &char)| target_char == char);
 
-        if length < 4 {
-            return None;
+        if is_match {
+            return Some(digit);
         }
-
-        match &word[0..4] {
-            "four" => return Some(4),
-            "five" => return Some(5),
-            "nine" => return Some(9),
-            _ => {}
-        }
-
-        if length < 5 {
-            return None;
-        }
-
-        match &word[0..5] {
-            "three" => return Some(3),
-            "seven" => return Some(7),
-            "eight" => return Some(8),
-            _ => {}
-        }
-
-        None
     }
 
+    None
+}
+
+fn parse_part2(input: &str) -> impl Iterator<Item = CalibrationDigits> + '_ {
     input.lines().map(|line| {
+        let line = line.as_bytes();
+
         let find_at_index = |index: usize| {
-            if let Some(digit) = line.chars().nth(index).unwrap().to_digit(10) {
-                return Some(digit as u64);
+            let digit_char = line[index];
+
+            if digit_char <= b'9' {
+                return Some(digit_char - b'0');
             }
 
-            if let Some(digit) = find_digit(&line[index..]) {
-                return Some(digit);
+            if let Some(word_digit) = find_word_digit(&line[index..]) {
+                return Some(word_digit);
             }
 
             None
@@ -102,16 +105,16 @@ fn calculate(digits: impl Iterator<Item = CalibrationDigits>) -> u64 {
                  last_digit,
              }| first_digit * 10 + last_digit,
         )
-        .sum()
+        .fold(0, |acc, number| acc + (number as u64))
 }
 
 fn main() {
     let input = include_str!("input.txt");
 
     let part_1 = calculate(parse_part1(input));
-    let part_2 = calculate(parse_part2(input));
-
     dbg!(part_1);
+
+    let part_2 = calculate(parse_part2(input));
     dbg!(part_2);
 }
 
@@ -120,23 +123,27 @@ mod tests {
     extern crate test;
     use super::*;
 
+    const INPUT: &str = include_str!("input.txt");
+
+    #[test]
+    fn test_part1() {
+        let result = calculate(parse_part1(INPUT));
+        assert_eq!(result, 54601);
+    }
+
+    #[test]
+    fn test_part2() {
+        let result = calculate(parse_part2(INPUT));
+        assert_eq!(result, 54078);
+    }
+
     #[bench]
     fn bench_part1(b: &mut test::Bencher) {
-        let input = include_str!("input.txt");
-
-        b.iter(|| {
-            let result = calculate(parse_part1(input));
-            test::black_box(result);
-        });
+        b.iter(|| calculate(parse_part1(INPUT)));
     }
 
     #[bench]
     fn bench_part2(b: &mut test::Bencher) {
-        let input = include_str!("input.txt");
-
-        b.iter(|| {
-            let result = calculate(parse_part2(input));
-            test::black_box(result);
-        });
+        b.iter(|| calculate(parse_part2(INPUT)));
     }
 }
