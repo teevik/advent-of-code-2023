@@ -9,3 +9,5 @@ edition = "2021"
 itertools = "0.12"
 anyhow = "1.0"
 vek = "0.16.1"
+indicatif = { version = "0.17.7", features = ["rayon"] }
+rayon = "1.8.0"
