@@ -9,19 +9,12 @@ fn parse_part1(input: &str) -> impl Iterator<Item = CalibrationDigits> + '_ {
     input.lines().map(|line| {
         let line = line.as_bytes();
 
-        // If the ascii char is less than 9, it's a digit, and then perform ascii math
-        let first_digit = line
-            .iter()
-            .find(|&char| *char <= b'9')
-            .expect("Always there")
-            - b'0';
+        fn find_first_digit(mut line: impl Iterator<Item = u8>) -> u8 {
+            line.find(|&char| char <= b'9').unwrap() - b'0'
+        }
 
-        let last_digit = line
-            .iter()
-            .rev()
-            .find(|&char| *char <= b'9')
-            .expect("Always there")
-            - b'0';
+        let first_digit = find_first_digit(line.iter().copied());
+        let last_digit = find_first_digit(line.iter().copied().rev());
 
         CalibrationDigits {
             first_digit,
@@ -67,7 +60,7 @@ fn parse_part2(input: &str) -> impl Iterator<Item = CalibrationDigits> + '_ {
     input.lines().map(|line| {
         let line = line.as_bytes();
 
-        let find_at_index = |index: usize| {
+        let find_digit_at_index = |index: usize| {
             let digit_char = line[index];
 
             if digit_char <= b'9' {
@@ -81,14 +74,8 @@ fn parse_part2(input: &str) -> impl Iterator<Item = CalibrationDigits> + '_ {
             None
         };
 
-        let first_digit = (0..line.len())
-            .find_map(find_at_index)
-            .expect("Always there");
-
-        let last_digit = (0..line.len())
-            .rev()
-            .find_map(find_at_index)
-            .expect("Always there");
+        let first_digit = (0..line.len()).find_map(find_digit_at_index).unwrap();
+        let last_digit = (0..line.len()).rev().find_map(find_digit_at_index).unwrap();
 
         CalibrationDigits {
             first_digit,
@@ -105,7 +92,8 @@ fn calculate(digits: impl Iterator<Item = CalibrationDigits>) -> u64 {
                  last_digit,
              }| first_digit * 10 + last_digit,
         )
-        .fold(0, |acc, number| acc + (number as u64))
+        .map(|number| number as u64)
+        .sum()
 }
 
 fn main() {
