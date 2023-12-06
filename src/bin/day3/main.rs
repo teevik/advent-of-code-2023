@@ -176,7 +176,7 @@ fn main() {
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
     extern crate test;
     use super::*;
 
