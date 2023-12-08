@@ -10,3 +10,4 @@ Ran with `RUSTFLAGS='-C target-cpu=native' cargo bench`
 | [Day 4](src/bin/day4/main.rs) | 77us   | 86us   |
 | [Day 5](src/bin/day5/main.rs) | 28us   | 34us   |
 | [Day 6](src/bin/day6/main.rs) | 0.1us  | 4295us |
+| [Day 7](src/bin/day7/main.rs) | 335us  | 344us |
