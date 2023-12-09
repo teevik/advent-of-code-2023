@@ -10,3 +10,4 @@
 | [Day 6](src/bin/day6/main.rs) | 0.1us  | 4295us |
 | [Day 7](src/bin/day7/main.rs) | 335us  | 344us  |
 | [Day 8](src/bin/day8/main.rs) | 284us  | 1631us |
+| [Day 9](src/bin/day9/main.rs) | 189us  | 193us  |
