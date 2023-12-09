@@ -12,3 +12,4 @@ vek = "0.16.1"
 indicatif = { version = "0.17.7", features = ["rayon"] }
 rayon = "1.8.0"
 rangemap = "1.4.0"
+num = "0.4.1"
