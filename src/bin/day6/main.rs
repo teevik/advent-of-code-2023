@@ -30,7 +30,7 @@ fn part_1(input: &str) -> usize {
 
     let [times, distances] = [times, distances].map(|numbers| {
         numbers
-            .split_whitespace()
+            .split_ascii_whitespace()
             .skip(1)
             .map(|number| number.parse::<u64>().unwrap())
     });
@@ -50,7 +50,7 @@ fn part_2(input: &str) -> usize {
 
     let [time, record_distance] = [times, distances].map(|numbers| {
         numbers
-            .split_whitespace()
+            .split_ascii_whitespace()
             .skip(1)
             .collect::<String>()
             .parse::<u64>()

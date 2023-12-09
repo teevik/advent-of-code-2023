@@ -7,7 +7,7 @@ struct Card {
 
 fn parse_numbers<const N: usize>(numbers: &str) -> [u8; N] {
     let mut numbers = numbers
-        .split(' ')
+        .split_ascii_whitespace()
         .filter(|number| !number.is_empty())
         .map(|number| number.parse::<u8>().unwrap());
 

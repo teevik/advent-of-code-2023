@@ -5,7 +5,7 @@ use itertools::Itertools;
 use std::rc::Rc;
 
 fn parse_history_line(line: &str) -> Vec<i32> {
-    line.split(' ')
+    line.split_ascii_whitespace()
         .map(|value| value.parse::<i32>().unwrap())
         .collect_vec()
 }

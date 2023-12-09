@@ -40,7 +40,9 @@ fn parse_map(input: &str) -> Map {
 
     let rules = lines
         .map(|line| {
-            let numbers = line.split(' ').map(|number| number.parse::<i64>().unwrap());
+            let numbers = line
+                .split_ascii_whitespace()
+                .map(|number| number.parse::<i64>().unwrap());
 
             let (destination_start, source_start, length) = numbers.collect_tuple().unwrap();
             let source_end = source_start + length;
@@ -63,7 +65,9 @@ fn parse_input(input: &str) -> ParseResult<impl Iterator<Item = i64> + '_> {
 
     let seeds = seeds.strip_prefix("seeds: ").unwrap();
 
-    let seeds = seeds.split(' ').map(|seed| seed.parse::<i64>().unwrap());
+    let seeds = seeds
+        .split_ascii_whitespace()
+        .map(|seed| seed.parse::<i64>().unwrap());
     let maps = maps.split("\n\n").map(parse_map).collect_vec();
 
     ParseResult { seeds, maps }
